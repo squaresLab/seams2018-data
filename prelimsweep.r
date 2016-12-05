@@ -14,6 +14,9 @@ attach(dataSub)
 # take the average
 aggdata <- aggregate(dataSub,by=list(generations,popSize,crossoverChance,killRatio,invalidActionPenalty,verbosenessPenalty,minAcceptedImprovement), FUN=median,na.rm=TRUE)
 
+# drop agg group cols
+aggdata <- aggdata[-c(1:7)]
+
 # now sort to get the best settings
 sorted <- aggdata[order(aggdata$runtime),]
 sorted <- sorted[order(-sorted$profit),]
@@ -29,7 +32,7 @@ datacat$crossoverChance <- as.factor(datacat$crossoverChance)
 
 
 # append point for prism
-aggdata <- rbind(aggdata,c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,281500,2993.499999971642))
+aggdata <- rbind(aggdata,c(1,1,1,1,1,1,1,281500,2993.499999971642))
 
 aggdata$type <- ifelse(aggdata$killRatio == 1, "PRISM", "SASS")
 
@@ -37,7 +40,9 @@ aggdata$type <- ifelse(aggdata$killRatio == 1, "PRISM", "SASS")
 mycolours <- c("PRISM" = "red", "SASS" = "black")
 
 p <- ggplot(data=aggdata, aes(x=aggdata$runtime/1000,y=aggdata$profit))
-p + geom_point(aes(color=aggdata$type)) + theme_bw() + ylab("Profit") + xlab("Runtime (secconds)") +scale_color_manual("Type", values = mycolours) + ggtitle("Parameter Sweep Profit vs Runtime")
+p + geom_point(aes(color=aggdata$type)) + theme_bw() + ylab("Profit") + xlab("Runtime (secconds)") +scale_color_manual("Planner", values = mycolours) + ggtitle("Parameter Sweep Profit vs Runtime")
+p <- ggplot(data=aggdata, aes(x=aggdata$runtime/1000,y=aggdata$profit))
+p + geom_point(aes(color=aggdata$type)) + theme_bw() + ylab("Profit") + xlab("Runtime (secconds)") +scale_color_manual("Planner", values = mycolours) + ggtitle("Parameter Sweep Profit vs Runtime") + coord_cartesian(ylim=c(2750, 3000))
 
 p <- ggplot(data=datacat, aes(x=generations,y=profit))
 p + geom_boxplot() + theme_bw() + ylab("Profit minus Penalty")

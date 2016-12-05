@@ -23,7 +23,7 @@ datacat <- sorted
 datacat$crossover <- as.factor(datacat$crossover)
 
 # append point for prism
-aggdata <- rbind(aggdata,c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,20,281500,2993.499999971642))
+aggdata <- rbind(aggdata,c(1,1,1,1,1,1,1,20,220525,2993.499999971642))
 
 aggdata$type <- ifelse(aggdata$killRatio == 1, "PRISM", "SASS")
 
@@ -31,7 +31,9 @@ aggdata$type <- ifelse(aggdata$killRatio == 1, "PRISM", "SASS")
 mycolours <- c("PRISM" = "red", "SASS" = "black")
 
 p <- ggplot(data=aggdata, aes(x=aggdata$runtime/1000,y=aggdata$profit))
-p + geom_point(aes(color=aggdata$type)) + theme_bw() + ylab("Profit") + xlab("Runtime (secconds)") +scale_color_manual("Type", values = mycolours) + ggtitle("Parameter Sweep Profit vs Runtime")
+p + geom_point(aes(color=aggdata$type)) + theme_bw() + ylab("Profit") + xlab("Runtime (seconds)") +scale_color_manual("Planner", values = mycolours) + ggtitle("Parameter Sweep Profit vs Runtime") + geom_hline(yintercept=2993.499,color="red")  + coord_cartesian(ylim=c(2750, 3000)) 
+
 
 p <- ggplot(data=datacat, aes(x=crossover,y=profit))
 p + geom_boxplot() + theme_bw() + ylab("Profit minus Penalty")
+
