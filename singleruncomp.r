@@ -25,11 +25,41 @@ start <- read.csv("~/research/seams2017_data/econpoor.csv")
 adapt <- read.csv("~/research/seams2017_data/econgood.csv")
 adapt <- read.csv("~/research/seams2017_data/econshort.csv")
 
+# econ scenario
+scratch <- read.csv("~/research/seams2017_data/hotfix/econscratch.csv")
+long <- read.csv("~/research/seams2017_data/hotfix/econlong.csv")
+short <- read.csv("~/research/seams2017_data/hotfix/econshort.csv")
+poor <- read.csv("~/research/seams2017_data/hotfix/econpoor.csv")
+
+# econ scenario
+scratch <- read.csv("~/research/seams2017_data/econb/econscratch.csv")
+long <- read.csv("~/research/seams2017_data/econb/econlong.csv")
+short <- read.csv("~/research/seams2017_data/econb/econshort.csv")
+poor <- read.csv("~/research/seams2017_data/econb/econpoor.csv")
+
+# 4serv scenario
+scratch <- read.csv("~/research/seams2017_data/hotfix/4servscratch.csv")
+long <- read.csv("~/research/seams2017_data/hotfix/4servlong.csv")
+short <- read.csv("~/research/seams2017_data/hotfix/4servshort.csv")
+poor <- read.csv("~/research/seams2017_data/hotfix/4servpoor.csv")
+
+# 10x scenario
+scratch <- read.csv("~/research/seams2017_data/hotfix/10xscratch.csv")
+long <- read.csv("~/research/seams2017_data/hotfix/10xlong.csv")
+short <- read.csv("~/research/seams2017_data/hotfix/10xshort.csv")
+poor <- read.csv("~/research/seams2017_data/hotfix/10xpoor.csv")
+
 # both scenario
-scratch <- read.csv("~/research/seams2017_data/fromscratch/bothscratch.csv")
-long <- read.csv("~/research/seams2017_data/fromscratch/bothgood.csv")
-short <- read.csv("~/research/seams2017_data/fromscratch/bothshort.csv")
-poor <- read.csv("~/research/seams2017_data/fromscratch/bothpoor.csv")
+scratch <- read.csv("~/research/seams2017_data/hotfix/bothscratch.csv")
+long <- read.csv("~/research/seams2017_data/hotfix/bothlong.csv")
+short <- read.csv("~/research/seams2017_data/hotfix/bothshort.csv")
+poor <- read.csv("~/research/seams2017_data/hotfix/bothpoor.csv")
+
+# huge scenario
+scratch <- read.csv("~/research/seams2017_data/huge/hugescratch.csv")
+long <- read.csv("~/research/seams2017_data/huge/hugelong.csv")
+short <- read.csv("~/research/seams2017_data/huge/hugeshort.csv")
+poor <- read.csv("~/research/seams2017_data/huge/hugepoor.csv")
 
 short$start <- "Short"
 
@@ -45,6 +75,9 @@ data <- rbind(data,short)
 
 # now format it nicely
 data <- rename(data,c("V1"="Generation","V2"="Initialization.Time.ms","V3"="Evaluation.Time.ms","V4"="Average.Individual.Size.Generation","V5"="Average.Individual.Size.Run","V6"="Best.Individual.Size.Generation","V7"="Best.Individual.Size.Run","V8"="Average.Fitness.Generation","V9"="Best.Fitness.Generation","V10"="Best.Fitness.Run"))
+
+# colorblind color scheme
+cbPalette <- c("#47242B","#5A607C", "#3EAA9A", "#C3E270", "#A18E7B")
 
 # lets try out some graphs
 # fitness / generation in human readable way
@@ -62,12 +95,12 @@ datacat$generation <- as.factor(datacat$generation)
 datacat$start = factor(datacat$start,levels=c("Short","Long","Scratch","Poor"))
 
 p <- ggplot(data=datacat, aes(x=generation,y=profit,color=start))
-p <- p + ylab("Profit") + xlab("Generation") + scale_color_discrete(name="Starting Plan") +ggtitle("4 Data Centers and 10x Requests") + scale_fill_grey() + theme_classic() 
-p <- p + theme(text=element_text(size=20), title=element_text(size=32,face="bold"),legend.position=c(.8,.5),legend.title=element_text(size=30,face="bold"),legend.text=element_text(size=25),legend.key.size=unit(1,"in"))
-p + geom_boxplot() 
+p <- p + ylab("Profit") + xlab("Generation") + scale_fill_discrete(name="Starting Plan")  + theme_bw()
+p <- p + theme(text=element_text(size=27), title=element_text(size=30,face="bold"),legend.position=c(.8,.5),legend.title=element_text(size=30,face="bold"),legend.text=element_text(size=25),legend.key.size=unit(0.75,"in"))
+p + scale_color_manual(values=cbPalette,name="Starting Plan") +  geom_boxplot(lwd=2,fatten=0.5,,position=position_dodge(width=.95))  + coord_cartesian(xlim=c(1,20.75)) #+ geom_hline(aes(yintercept = 4938.98986581),lwd=1.25)
 
 p <- ggplot(data=subset(datacat,start=="Good"), aes(x=generation,y=profit,color=start))
-p + geom_boxplot() + ylab("Profit") + xlab("Generation") + scale_color_discrete(name="Starting Plan\nQuality") +ggtitle("4 Data Centers and 10x Requests") + scale_fill_grey() + theme_classic()
+p + geom_boxplot() + ylab("Profit") + xlab("Generation") + scale_color_discrete(name="Starting Plan\nQuality") +ggtitle("16 Data Centers and 1 Million Requests") + scale_fill_grey() + theme_classic()
 
 # just adapt
 p <- ggplot(data=data, aes(x=generation,y=profit,color=start))
@@ -89,7 +122,11 @@ aggdata<-rbind(agglong,aggshort)
 aggdata <- rbind(aggdata,aggscratch)
 aggdata <- rbind(aggdata,aggpoor)
 
+aggdata$Group.2 = factor(aggdata$Group.2,levels=c("Short","Long","Scratch","Poor"))
+
 # eval time / generation
 p <- ggplot(data=aggdata, aes(y=profit,x=cumruntime/1000,color=Group.2))
-p + geom_line() + theme_bw() + xlab("Cumulative Evaluation Time (seconds)") + ylab("Profit") + scale_color_discrete(name="Starting Plan\nQuality") + ggtitle("Profit vs Evaluation Time") #+ coord_cartesian(xlim=c(0, 20))
+p <- p +  theme_bw() + xlab("Cumulative Evaluation Time (seconds)") + ylab("Profit") + scale_color_discrete(name="Starting Plan\nQuality") #+ coord_cartesian(xlim=c(0, 20))
+p <- p + theme(text=element_text(size=27), title=element_text(size=30,face="bold"),legend.position=c(.8,.5),legend.title=element_text(size=30,face="bold"),legend.text=element_text(size=25),legend.key.size=unit(1,"in"))
+p + scale_colour_manual(values=cbPalette,name="Starting Plan") + geom_line(lwd=1.5)   + coord_cartesian(xlim=c(0.5,125))
 
