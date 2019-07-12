@@ -37,7 +37,7 @@ mycolours <- c("PRISM" = "red", "GP" = "black")
 
 p <- ggplot(data=aggdata, aes(x=aggdata$runtime/1000,y=aggdata$profit,color=aggdata$type),size=2)
 p <- p + theme_bw()+ theme(text=element_text(size=27), title=element_text(size=30,face="bold"),legend.position=c(.8,.5),legend.title=element_text(size=30,face="bold"),legend.text=element_text(size=25),legend.key.size=unit(0.4,"in"))
-p + geom_point(size=4) + ylab("Profit") + xlab("Runtime (seconds)") +scale_color_manual("Planner", values = mycolours) + geom_hline(yintercept=2993.499,color="black")  + coord_cartesian(ylim=c(2750, 3000)) + symbols(x=220.525,y=2993.499999971642,circles=.1) + scale_color_grey("Planner")
+p + geom_point(size=4) + ylab("Utility") + xlab("Runtime (seconds)") +scale_color_manual("Planner", values = mycolours) + geom_hline(yintercept=2993.499,color="black")  + coord_cartesian(ylim=c(2750, 3000)) + symbols(x=220.525,y=2993.499999971642,circles=.1) + scale_color_grey("Planner")
 
 
 p <- ggplot(data=datacat, aes(x=crossover,y=profit))
